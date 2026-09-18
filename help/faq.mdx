@@ -1,7 +1,7 @@
 ---
-title: "Frequently Asked Questions About mFoundry"
+title: "mFoundry Frequently Asked Questions and Help Guide"
 sidebarTitle: "FAQ"
-description: "Find answers to common questions about mFoundry accounts, billing, API limits, permissions, integrations, and data security."
+description: "Find answers to common questions about mFoundry accounts, billing, API rate limits, role permissions, integrations, and data security."
 ---
 
 This FAQ collects the questions our users ask most often, organized by topic so you can jump straight to what you need. Whether you're sorting out a billing change, understanding API rate limits, or verifying how mFoundry handles your data, you'll find a direct answer below. If your question isn't covered here, reach out to the team at support@mfoundry.io or open a ticket from the dashboard help menu.
@@ -20,6 +20,10 @@ This FAQ collects the questions our users ask most often, organized by topic so 
   <Accordion title="How do I cancel my subscription?">
     Go to **Settings > Billing** and click **Cancel Subscription**. You are asked to confirm the cancellation and optionally provide a reason. Your workspace remains fully accessible through the end of the current billing period. After that, the account moves to a read-only state and your data is retained for **30 days**, giving you time to export anything you need before permanent deletion.
   </Accordion>
+
+  <Accordion title="What happens to my data if I cancel?">
+    After your billing period ends, your workspace enters a **read-only** state for 30 days. During this window you can log in, browse your projects and workflows, and download an export of your data. After 30 days, all workspace data is permanently deleted and cannot be recovered. To export your data, go to **Settings > Data > Export** before the end of the retention window.
+  </Accordion>
 </AccordionGroup>
 
 ## API & Integrations
@@ -36,16 +40,24 @@ This FAQ collects the questions our users ask most often, organized by topic so 
   <Accordion title="Which integrations are supported?">
     mFoundry ships with native integrations for **Slack**, **GitHub**, and **Jira**. Native integrations offer one-click OAuth setup, pre-built event mappings, and managed token refresh. For any tool without a native integration, use the [Webhooks](/configuration/webhooks) system to push mFoundry events to any HTTPS endpoint, or call external APIs directly from workflow steps using the HTTP action. Custom integrations built on webhooks work with virtually any platform that accepts HTTP POST requests.
   </Accordion>
+
+  <Accordion title="Can I manage projects and users via the API?">
+    Yes. The mFoundry REST API (`https://api.mfoundry.io/v1`) exposes full CRUD operations for projects and read access for users. Use `GET /projects` to list all projects, `POST /projects` to create one, `GET /projects/:id` or `PUT /projects/:id` for reading and updating a specific project, and `DELETE /projects/:id` to remove it. For users, `GET /users` returns your organization's member list and `GET /users/:id` retrieves a single member. Authenticate all requests with your API key in the `Authorization: Bearer` header.
+  </Accordion>
 </AccordionGroup>
 
 ## Security & Data
 
 <AccordionGroup>
   <Accordion title="Is my data encrypted?">
-    Yes. mFoundry encrypts all customer data **at rest** using **AES-256** and **in transit** using **TLS 1.2 or higher**. Environment variable values, API keys, and OAuth tokens receive an additional layer of application-level encryption before being written to the database. mFoundry undergoes regular third-party security audits, and the results are available to enterprise customers under NDA.
+    Yes. mFoundry encrypts all customer data **at rest** using **AES-256** and **in transit** using **TLS 1.2 or higher**. Environment variable values, API keys, and OAuth tokens receive an additional layer of application-level encryption before being written to storage. mFoundry undergoes regular third-party security audits, and the results are available to enterprise customers under NDA.
   </Accordion>
 
   <Accordion title="Can I export my data?">
     Yes. Go to **Settings > Data > Export** and click **Request Export**. mFoundry packages your projects, workflows, audit logs, and configuration into a structured archive and sends a secure, time-limited download link to your account email within a few minutes. Exports are available on all paid plans. If you're in the process of canceling, initiate an export before the end of your billing period to ensure access.
+  </Accordion>
+
+  <Accordion title="Who can access my organization's data?">
+    Only members you explicitly invite to your organization can access its data, subject to the role-based permissions you assign. mFoundry staff may access customer data only to provide support when you have opened a ticket and granted access, and never for any other purpose. You can review all member access in **Settings > Members** and inspect activity in the audit log under **Settings > Audit Log**.
   </Accordion>
 </AccordionGroup>

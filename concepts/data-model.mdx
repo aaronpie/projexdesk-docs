@@ -1,10 +1,10 @@
 ---
-title: "mFoundry Data Model: Organizations and Projects"
+title: "mFoundry Data Model: Entities, Fields, and Relationships"
 sidebarTitle: "Data Model"
 description: "Understand how mFoundry structures your data across organizations, projects, workflows, and tasks — and how they relate to users and permissions."
 ---
 
-Every resource in mFoundry exists within a strict, relational hierarchy that makes ownership, access control, and billing straightforward to reason about. At the top sits the **Organization**, which acts as the root namespace for all of your data. Organizations contain **Projects**, projects contain **Workflows**, and workflows decompose into individual **Tasks** at runtime. **Users** are members of one or more organizations and inherit permissions through their assigned roles. Understanding the fields and relationships that make up these entities helps you build integrations, write API queries, and design access-control policies with confidence.
+Every resource in mFoundry exists within a strict, relational hierarchy that makes ownership, access control, and billing straightforward to reason about. At the top sits the **Organization**, which acts as the root namespace for all of your data. Organizations contain **Projects**, projects contain **Workflows**, and workflows decompose into individual **Tasks** at runtime. **Users** are members of one or more organizations and inherit permissions through their assigned roles. **Webhooks** are registered per project and deliver event notifications to your own endpoints. Understanding the fields and relationships that make up these entities helps you build integrations, write API queries, and design access-control policies with confidence.
 
 <Note>
   All `id` fields across every entity are **UUIDs (version 4)**. When referencing a resource in the API or in webhook payloads, always use the full UUID string — human-readable slugs and names are for display purposes only and may change.
@@ -36,7 +36,7 @@ An organization is the top-level container for everything your company owns in m
 
 ## Project
 
-A project belongs to exactly one organization and serves as the primary workspace for a product, initiative, or client engagement. Projects group workflows together and define which team members have access to those workflows through role assignments.
+A project belongs to exactly one organization and serves as the primary workspace for a product, initiative, or client engagement. Projects group workflows together and define which team members have access to those workflows through role assignments. Use the `/projects` endpoints to create, retrieve, update, and delete projects programmatically.
 
 <ResponseField name="id" type="string" required>
   The unique UUID that identifies this project. Immutable after creation.
@@ -94,9 +94,47 @@ A workflow is an ordered sequence of steps that lives inside a project. Each wor
 
 ---
 
+## Task
+
+A task is the runtime record of a single step executing within a workflow run. When a workflow is triggered, mFoundry automatically creates one task per step and tracks its progress in real time. Tasks are read-only after creation — you can inspect their status and logs, retry failed tasks, or cancel pending ones from the dashboard or via the API.
+
+<ResponseField name="id" type="string" required>
+  The unique UUID that identifies this task. Immutable after creation.
+</ResponseField>
+
+<ResponseField name="workflow_id" type="string" required>
+  The UUID of the workflow that owns this task.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+  The current execution state of the task. Accepted values are `pending`, `running`, `succeeded`, and `failed`.
+</ResponseField>
+
+<ResponseField name="step_name" type="string" required>
+  The name of the workflow step this task corresponds to, as defined in the workflow configuration.
+</ResponseField>
+
+<ResponseField name="output" type="object">
+  The JSON output produced by the step upon successful completion. Present only when `status` is `succeeded`.
+</ResponseField>
+
+<ResponseField name="error" type="string">
+  A human-readable error message describing why the task failed. Present only when `status` is `failed`.
+</ResponseField>
+
+<ResponseField name="created_at" type="string (ISO 8601)">
+  The UTC timestamp at which the task was created. Set by the server and read-only.
+</ResponseField>
+
+<ResponseField name="updated_at" type="string (ISO 8601)">
+  The UTC timestamp of the most recent status change. Automatically updated as the task progresses.
+</ResponseField>
+
+---
+
 ## User
 
-A user represents a human or service account that has been granted membership to one or more organizations. Users authenticate via email and password or SSO, and interact with mFoundry through the dashboard or the API using personal access tokens.
+A user represents a human or service account that has been granted membership to one or more organizations. Users authenticate via email and password or SSO, and interact with mFoundry through the dashboard or the API using personal access tokens. Use the `/users` endpoints to list and retrieve user records.
 
 <ResponseField name="id" type="string" required>
   The unique UUID that identifies this user across all organizations. Immutable after account creation.
@@ -116,4 +154,34 @@ A user represents a human or service account that has been granted membership to
 
 <ResponseField name="created_at" type="string (ISO 8601)">
   The UTC timestamp at which the user account was created. Set by the server and read-only.
+</ResponseField>
+
+---
+
+## Webhook
+
+A webhook is an outbound HTTP endpoint registration that tells mFoundry where to deliver event notifications for a given project. Once registered, mFoundry sends a signed JSON payload to your target URL whenever a configured event occurs — such as a workflow completing or a task failing. Use the `/webhooks` endpoints to create, list, and delete webhook registrations.
+
+<ResponseField name="id" type="string" required>
+  The unique UUID that identifies this webhook registration. Use this value when deleting a webhook via `DELETE /webhooks/:id`.
+</ResponseField>
+
+<ResponseField name="project_id" type="string" required>
+  The UUID of the project this webhook is scoped to. Events from other projects will not be delivered to this endpoint.
+</ResponseField>
+
+<ResponseField name="url" type="string" required>
+  The HTTPS URL that mFoundry will POST event payloads to. Must be publicly reachable.
+</ResponseField>
+
+<ResponseField name="events" type="array of strings" required>
+  The list of event types that trigger a delivery to this webhook. Example values include `workflow.completed`, `workflow.failed`, and `task.failed`.
+</ResponseField>
+
+<ResponseField name="secret" type="string">
+  An optional shared secret used to sign each delivery with an HMAC-SHA256 signature. Verify the `X-mFoundry-Signature` header in your receiver to confirm authenticity.
+</ResponseField>
+
+<ResponseField name="created_at" type="string (ISO 8601)">
+  The UTC timestamp at which the webhook was registered. Set by the server and read-only.
 </ResponseField>

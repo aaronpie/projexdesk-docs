@@ -1,5 +1,5 @@
 ---
-title: "REST API Endpoints for Webhooks"
+title: "mFoundry Webhooks API: Register, List, and Delete Endpoints"
 sidebarTitle: "Webhooks"
 description: "Create, list, and delete mFoundry webhook subscriptions via the API. Includes available events, payload structure, and signature verification."
 ---
@@ -64,6 +64,8 @@ Register a new webhook subscription. mFoundry will send an HTTP `POST` request t
   A shared secret used to sign outgoing webhook payloads. If you omit this field, mFoundry auto-generates a cryptographically secure secret for you. The secret is returned **once** in the creation response and cannot be retrieved again.
 </ParamField>
 
+<CodeGroup>
+
 ```bash cURL
 curl --request POST \
   --url https://api.mfoundry.io/v1/webhooks \
@@ -75,6 +77,24 @@ curl --request POST \
     "secret": "my-super-secret-value"
   }'
 ```
+
+```javascript JavaScript
+const response = await fetch("https://api.mfoundry.io/v1/webhooks", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    url: "https://myapp.example.com/hooks/mfoundry",
+    events: ["workflow.completed", "project.created"],
+    secret: "my-super-secret-value",
+  }),
+});
+const webhook = await response.json();
+```
+
+</CodeGroup>
 
 **Example response (`201 Created`):**
 
@@ -103,11 +123,23 @@ Delete a webhook subscription. mFoundry immediately stops delivering events to t
   The unique identifier of the webhook to delete (for example, `wh_abc123`).
 </ParamField>
 
+<CodeGroup>
+
 ```bash cURL
 curl --request DELETE \
   --url https://api.mfoundry.io/v1/webhooks/wh_abc123 \
   --header "Authorization: Bearer YOUR_API_KEY"
 ```
+
+```javascript JavaScript
+await fetch("https://api.mfoundry.io/v1/webhooks/wh_abc123", {
+  method: "DELETE",
+  headers: { "Authorization": "Bearer YOUR_API_KEY" },
+});
+// Returns 204 No Content — no response body to parse
+```
+
+</CodeGroup>
 
 ---
 

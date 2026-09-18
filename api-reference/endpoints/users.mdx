@@ -1,5 +1,5 @@
 ---
-title: "REST API Endpoints for Users"
+title: "mFoundry Users API: List, Invite, and Manage Members"
 sidebarTitle: "Users"
 description: "Manage organization members via the mFoundry REST API. List users, retrieve profiles, invite new members, and update roles programmatically."
 ---
@@ -123,6 +123,8 @@ Invite a new user to your organization by email. mFoundry sends an invitation em
   - `viewer` — read-only access
 </ParamField>
 
+<CodeGroup>
+
 ```bash cURL
 curl --request POST \
   --url https://api.mfoundry.io/v1/users \
@@ -133,6 +135,23 @@ curl --request POST \
     "role": "member"
   }'
 ```
+
+```javascript JavaScript
+const response = await fetch("https://api.mfoundry.io/v1/users", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    email: "newteammate@example.com",
+    role: "member",
+  }),
+});
+const newUser = await response.json();
+```
+
+</CodeGroup>
 
 **Example response (`201 Created`):**
 
@@ -166,6 +185,8 @@ Update a user's role within your organization. This is the only field you can ch
   The new role to assign. Must be one of: `owner`, `admin`, `member`, `viewer`.
 </ParamField>
 
+<CodeGroup>
+
 ```bash cURL
 curl --request PUT \
   --url https://api.mfoundry.io/v1/users/user_abc123 \
@@ -175,6 +196,23 @@ curl --request PUT \
     "role": "admin"
   }'
 ```
+
+```javascript JavaScript
+const response = await fetch(
+  "https://api.mfoundry.io/v1/users/user_abc123",
+  {
+    method: "PUT",
+    headers: {
+      "Authorization": "Bearer YOUR_API_KEY",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ role: "admin" }),
+  }
+);
+const updated = await response.json();
+```
+
+</CodeGroup>
 
 **Example response:**
 

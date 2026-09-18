@@ -1,5 +1,5 @@
 ---
-title: "Set Up Webhooks to Automate mFoundry Events"
+title: "Configure and Manage Webhooks in mFoundry Platform"
 sidebarTitle: "Webhooks"
 description: "Configure outbound webhooks in mFoundry to notify your systems when projects, workflows, or tasks change — with HMAC signature verification."
 ---
@@ -120,3 +120,77 @@ After **5 failed attempts** mFoundry stops retrying and marks the webhook delive
 <Note>
   Review the full history of webhook delivery attempts — including request headers, response codes, and response bodies — in **Settings > Webhooks > Delivery History**. Use this log to diagnose failures and manually replay specific deliveries during debugging.
 </Note>
+
+## Webhooks API Reference
+
+You can also manage webhooks programmatically using the mFoundry REST API. All webhook endpoints are available under `https://api.mfoundry.io/v1`. Authenticate every request by passing your API key in the `Authorization` header as a Bearer token.
+
+### List Webhooks
+
+Retrieve all webhooks configured for your organization.
+
+```http
+GET https://api.mfoundry.io/v1/webhooks
+Authorization: Bearer YOUR_API_KEY
+```
+
+**Example response:**
+
+```json
+[
+  {
+    "id": "wh_a1b2c3",
+    "url": "https://example.com/hooks/mfoundry",
+    "events": ["project.created", "workflow.completed"],
+    "created_at": "2024-05-15T09:30:00Z",
+    "status": "active"
+  }
+]
+```
+
+### Create a Webhook
+
+Register a new webhook endpoint for your organization.
+
+```http
+POST https://api.mfoundry.io/v1/webhooks
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+```
+
+**Request body:**
+
+```json
+{
+  "url": "https://example.com/hooks/mfoundry",
+  "events": ["project.created", "workflow.completed"]
+}
+```
+
+**Example response (`201 Created`):**
+
+```json
+{
+  "id": "wh_a1b2c3",
+  "url": "https://example.com/hooks/mfoundry",
+  "events": ["project.created", "workflow.completed"],
+  "secret": "whsec_xxxxxxxxxxxxxxxxxxxxxxxx",
+  "created_at": "2024-06-01T12:00:00Z",
+  "status": "active"
+}
+```
+
+<Warning>
+  The `secret` field is returned **only at creation time**. Copy it immediately and store it securely — it cannot be retrieved again. If you lose the secret, delete the webhook and create a new one.
+</Warning>
+
+### Delete a Webhook
+
+Permanently remove a webhook by its ID. Deleted webhooks stop receiving events immediately.
+
+```http
+DELETE https://api.mfoundry.io/v1/webhooks/{id}
+Authorization: Bearer YOUR_API_KEY
+```
+
+A successful deletion returns `204 No Content` with an empty response body.

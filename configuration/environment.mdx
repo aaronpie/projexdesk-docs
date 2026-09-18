@@ -1,7 +1,7 @@
 ---
-title: "Using Environments in mFoundry Projects"
+title: "Managing Project Environments in mFoundry Workflows"
 sidebarTitle: "Environments"
-description: "Create development, staging, and production environments in mFoundry to safely test workflows before shipping to production."
+description: "Create and manage development, staging, and production environments in mFoundry to test workflows safely before deploying to production."
 ---
 
 Environments let you run the same workflow logic against different configurations — separate API endpoints, credentials, and feature flags — without duplicating your work. By isolating development, staging, and production contexts within a single project, you catch issues early, validate changes safely, and deploy with confidence. Every project in mFoundry supports multiple environments, and each environment maintains its own set of encrypted variables that your workflows reference at runtime.
@@ -40,7 +40,7 @@ mFoundry offers three standard environment types, each designed for a distinct s
 
 ## Environment Variables
 
-Environment variables are the recommended way to pass configuration and secrets into your workflows. Each environment maintains its own isolated variable store, so the same key — for example, `DATABASE_URL` — can hold different values in development and production without any workflow changes.
+Environment variables are the recommended way to pass configuration and secrets into your workflows. Each environment maintains its own isolated variable store, so the same key — for example, `API_BASE_URL` — can hold different values in development and production without any workflow changes.
 
 **Adding variables:**
 
