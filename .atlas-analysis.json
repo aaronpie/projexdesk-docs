@@ -1,13 +1,11 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
+  "projectType": "saas",
+  "projectName": "mFoundry",
+  "projectDescription": "A SaaS platform that empowers users to build, manage, and scale their workflows from a single dashboard.",
   "theme": "almond",
-  "name": "mFoundry",
-  "colors": {
-    "primary": "#ef7025",
-    "light": "#eec9bc",
-    "dark": "#4fa1ab"
-  },
-  "favicon": "/favicon.svg",
+  "primaryColor": "#ef7025",
+  "lightColor": "#eec9bc",
+  "darkColor": "#4fa1ab",
   "navigation": {
     "tabs": [
       {
@@ -80,20 +78,25 @@
       }
     ]
   },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:support@mfoundry.io"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mfoundry.io"
-    }
-  },
-  "footer": {
-    "socials": {}
-  }
+  "keyFeatures": [
+    "Intuitive dashboard for managing projects and workflows",
+    "Team collaboration with role-based access control",
+    "Webhook and integration support for third-party tools",
+    "Real-time notifications and activity feeds",
+    "Flexible configuration and environment management",
+    "Secure API with token-based authentication"
+  ],
+  "publicApiSurface": [
+    "GET /projects",
+    "POST /projects",
+    "GET /projects/:id",
+    "PUT /projects/:id",
+    "DELETE /projects/:id",
+    "GET /users",
+    "POST /users",
+    "GET /users/:id",
+    "POST /webhooks",
+    "GET /webhooks",
+    "DELETE /webhooks/:id"
+  ]
 }

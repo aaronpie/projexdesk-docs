@@ -1,0 +1,63 @@
+---
+title: "Using Environments in mFoundry Projects"
+sidebarTitle: "Environments"
+description: "Create development, staging, and production environments in mFoundry to safely test workflows before shipping to production."
+---
+
+Environments let you run the same workflow logic against different configurations — separate API endpoints, credentials, and feature flags — without duplicating your work. By isolating development, staging, and production contexts within a single project, you catch issues early, validate changes safely, and deploy with confidence. Every project in mFoundry supports multiple environments, and each environment maintains its own set of encrypted variables that your workflows reference at runtime.
+
+<Warning>
+  Never store raw secrets — API keys, passwords, or tokens — directly inside workflow steps or hardcoded configuration. Always use environment variables so that sensitive values stay encrypted and are never exposed in logs or workflow definitions.
+</Warning>
+
+## Environment Types
+
+mFoundry offers three standard environment types, each designed for a distinct stage of your development lifecycle.
+
+- **Development** — A sandbox for active work. Workflows run freely, errors are expected, and no production systems are affected. Use this environment to build and iterate quickly.
+- **Staging** — A production-mirror environment used for final validation. Connect staging to your pre-production infrastructure so you can run end-to-end tests with realistic data before releasing.
+- **Production** — The live environment that serves real users and systems. Access to production environment variables is restricted by role, and all changes are logged in the audit trail.
+
+## Creating an Environment
+
+<Steps>
+  <Step title="Open a project">
+    From your mFoundry dashboard, click the project in which you want to add an environment. You land on the project's **Overview** tab.
+  </Step>
+  <Step title="Click the Environments tab">
+    In the project navigation, select the **Environments** tab. You see a list of all existing environments for this project.
+  </Step>
+  <Step title="Click New Environment and choose a type">
+    Click **New Environment** in the top-right corner. In the dialog that appears, enter a name for the environment (e.g., `staging-us-east`) and select an environment type — **Development**, **Staging**, or **Production**.
+  </Step>
+  <Step title="Set environment-specific variables">
+    Add key/value pairs that your workflows will use in this environment. For example, set `API_BASE_URL` to your staging endpoint or `LOG_LEVEL` to `debug`. Each value is encrypted before it is stored.
+  </Step>
+  <Step title="Save and publish">
+    Click **Save**. The new environment becomes immediately available to your project's workflows. Workflows reading environment variables will pick up the new values on their next execution.
+  </Step>
+</Steps>
+
+## Environment Variables
+
+Environment variables are the recommended way to pass configuration and secrets into your workflows. Each environment maintains its own isolated variable store, so the same key — for example, `DATABASE_URL` — can hold different values in development and production without any workflow changes.
+
+**Adding variables:**
+
+1. Open the target environment from the **Environments** tab.
+2. Click **Add Variable**, enter the key and value, then click **Save**.
+3. To update an existing variable, click the pencil icon next to it, edit the value, and save.
+
+**Using variables in workflows:**
+
+Reference a variable inside any workflow step using the `${{ env.VARIABLE_NAME }}` syntax. mFoundry resolves the value at runtime based on the environment the workflow is running in.
+
+**Security:**
+
+All variable values are encrypted at rest using AES-256. Encrypted values are never displayed in plaintext after initial entry — you can overwrite a value but not retrieve the original. This applies to all environment types, including development.
+
+## Promoting Between Environments
+
+When a workflow is ready to move from development to staging, or from staging to production, use the **Promote** button rather than recreating it manually. Promoting copies the workflow definition — its steps, logic, and structure — into the target environment while preserving that environment's own variables.
+
+To promote a workflow, open it in the source environment and click **Promote to…** in the actions menu. Select the target environment, review the diff that mFoundry displays, and confirm. The promoted workflow is created in a **draft** state in the target environment so you can review it before activating.

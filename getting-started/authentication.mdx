@@ -1,0 +1,77 @@
+---
+title: "Authenticate with the mFoundry API"
+sidebarTitle: "Authentication"
+description: "Authenticate every mFoundry API request using a Bearer token. Learn how to generate API keys, rotate them, and handle authentication errors."
+---
+
+mFoundry uses API key authentication to secure every request to its REST API. Each API key acts as a Bearer token: you include it in the `Authorization` header of every HTTP request you make, and mFoundry validates it before processing anything. There are no sessions or cookies involved — authentication is stateless, explicit, and straightforward to implement in any language or HTTP client.
+
+## Generating an API Key
+
+<Steps>
+  <Step title="Log In">
+    Go to [app.mfoundry.io](https://app.mfoundry.io) and sign in with your email and password (or via SSO if your organization has configured it).
+  </Step>
+  <Step title="Navigate to API Keys">
+    Open the **Settings** menu from the top-right navigation bar and select **API Keys** from the left sidebar. You'll see a list of all existing keys for your account, along with their names, creation dates, and expiry status.
+  </Step>
+  <Step title="Create a New Key">
+    Click **New API Key**. Enter a descriptive **name** for the key (for example, `production-server` or `ci-pipeline`) so you can identify its purpose later. Optionally, set an **expiry date** — keys without an expiry remain valid until you manually revoke them. Click **Create** to generate the key.
+  </Step>
+  <Step title="Copy the Key">
+    mFoundry displays your new API key **exactly once**, immediately after creation. Copy it now and store it somewhere secure, such as a password manager or a secrets manager like AWS Secrets Manager or HashiCorp Vault. Once you navigate away from this page, the full key value is no longer retrievable.
+  </Step>
+</Steps>
+
+## Using Your API Key
+
+Include your API key as a Bearer token in the `Authorization` header of every request. The format is always:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+**cURL example:**
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+     https://api.mfoundry.io/v1/projects
+```
+
+**JavaScript (Fetch API) example:**
+
+```javascript
+const response = await fetch("https://api.mfoundry.io/v1/projects", {
+  method: "GET",
+  headers: {
+    "Authorization": `Bearer ${process.env.MFOUNDRY_API_KEY}`,
+    "Content-Type": "application/json",
+  },
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+<Warning>
+  Never hardcode your API key directly in source code. Anyone with access to your repository — now or in the future — could read and misuse it. Always load the key from an environment variable (for example, `process.env.MFOUNDRY_API_KEY`) or a dedicated secrets manager.
+</Warning>
+
+## Rotating & Revoking Keys
+
+You should rotate API keys regularly as a security best practice, and revoke them immediately if you suspect they've been compromised.
+
+To **rotate** a key, navigate to **Settings > API Keys**, click the **⋯** menu next to the key you want to replace, and select **Rotate**. mFoundry generates a new key value and invalidates the old one. Any in-flight requests that were already authenticated with the old key before rotation complete normally — only new requests made after rotation fail with the old key. Update your environment variables or secrets store with the new value before the old key is invalidated.
+
+To **revoke** a key without replacing it, select **Revoke** from the same menu. Revocation is immediate and permanent. All subsequent requests using that key return a `401 Unauthorized` error.
+
+## Authentication Errors
+
+When authentication fails, mFoundry returns a standard HTTP error response. The table below describes the two most common authentication-related status codes:
+
+| Status Code | Name | Cause |
+|---|---|---|
+| `401 Unauthorized` | Missing or invalid token | The `Authorization` header is absent, malformed, or contains a key that doesn't exist or has been revoked. |
+| `403 Forbidden` | Insufficient permissions | The API key is valid but does not have permission to perform the requested action on the specified resource. |
+
+If you receive a `401`, verify that your `Authorization` header is correctly formatted as `Bearer YOUR_API_KEY` and that the key hasn't expired or been revoked. If you receive a `403`, check the key's associated role and permissions under **Settings > API Keys** — you may need to use a key with broader access or contact your organization Admin.

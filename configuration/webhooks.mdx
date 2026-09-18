@@ -1,0 +1,122 @@
+---
+title: "Set Up Webhooks to Automate mFoundry Events"
+sidebarTitle: "Webhooks"
+description: "Configure outbound webhooks in mFoundry to notify your systems when projects, workflows, or tasks change — with HMAC signature verification."
+---
+
+Webhooks let mFoundry push real-time event notifications to any HTTPS endpoint you control, so your external systems stay in sync without polling the API. Common use cases include triggering a CI/CD pipeline when a workflow completes, posting a Slack message when a task is assigned, syncing project updates to a project management tool, or logging audit events to your own data warehouse. Each webhook fires an HTTP POST request with a signed JSON payload the moment the subscribed event occurs.
+
+## Creating a Webhook
+
+<Steps>
+  <Step title="Go to Settings > Webhooks">
+    Open your organization **Settings** and select the **Webhooks** tab. You see a list of all configured webhooks and their current status.
+  </Step>
+  <Step title="Click New Webhook">
+    Click **New Webhook** in the top-right corner to open the webhook creation form.
+  </Step>
+  <Step title="Enter the endpoint URL">
+    Paste the destination URL into the **Endpoint URL** field. The URL must use **HTTPS** — mFoundry rejects plain HTTP endpoints to ensure all payloads are transmitted securely.
+  </Step>
+  <Step title="Choose which events to subscribe to">
+    Select one or more events that should trigger this webhook. Available events include:
+
+    | Event | Fires when… |
+    |---|---|
+    | `project.created` | A new project is created in your organization |
+    | `project.updated` | A project's name, settings, or status changes |
+    | `workflow.completed` | A workflow run finishes (success or failure) |
+    | `task.assigned` | A task is assigned or reassigned to a member |
+
+    Subscribe only to the events your endpoint needs — fewer subscriptions means less processing overhead on your end.
+  </Step>
+  <Step title="Click Save — a secret key is generated">
+    Click **Save**. mFoundry generates a unique **secret key** for this webhook and displays it once. Copy and store it securely — you'll use it to verify incoming payloads. If you lose the key, revoke the webhook and create a new one.
+  </Step>
+</Steps>
+
+## Webhook Payload
+
+Every webhook request is an HTTP POST with a `Content-Type: application/json` header. The payload follows a consistent envelope structure across all event types, with event-specific data in the `data` object.
+
+Below is a sample payload for a `workflow.completed` event:
+
+```json
+{
+  "event": "workflow.completed",
+  "timestamp": "2024-06-01T12:00:00Z",
+  "data": {
+    "workflow_id": "wf_abc123",
+    "project_id": "proj_xyz789",
+    "status": "completed"
+  }
+}
+```
+
+- **`event`** — The name of the event that fired, matching the subscription you configured.
+- **`timestamp`** — ISO 8601 UTC timestamp of when the event occurred on mFoundry's servers.
+- **`data`** — An object containing resource identifiers and state relevant to the event type.
+
+## Verifying Signatures
+
+Every request mFoundry sends includes an `X-mFoundry-Signature` header containing an HMAC-SHA256 signature. Verify this signature on every incoming request to confirm the payload originated from mFoundry and was not tampered with in transit.
+
+The signature is computed as:
+
+```
+HMAC-SHA256(secret_key, raw_request_body)
+```
+
+The following Node.js example shows how to verify the signature in an Express handler:
+
+```javascript
+const crypto = require('crypto');
+
+function verifyWebhookSignature(req, secret) {
+  const incomingSignature = req.headers['x-mfoundry-signature'];
+
+  if (!incomingSignature) {
+    throw new Error('Missing X-mFoundry-Signature header');
+  }
+
+  // Compute the expected signature using the raw request body
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(req.rawBody) // use the unparsed body buffer
+    .digest('hex');
+
+  // Use timingSafeEqual to prevent timing attacks
+  const incomingBuffer = Buffer.from(incomingSignature, 'hex');
+  const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+
+  if (incomingBuffer.length !== expectedBuffer.length) {
+    throw new Error('Signature length mismatch');
+  }
+
+  if (!crypto.timingSafeEqual(incomingBuffer, expectedBuffer)) {
+    throw new Error('Signature verification failed');
+  }
+
+  return true;
+}
+```
+
+Always use `crypto.timingSafeEqual` or an equivalent constant-time comparison function. String equality operators (like `===`) are vulnerable to timing attacks.
+
+## Retry Policy
+
+If your endpoint returns a non-2xx response or fails to respond within **10 seconds**, mFoundry marks the delivery as failed and retries automatically. Retries follow an exponential backoff schedule:
+
+| Attempt | Delay |
+|---|---|
+| 1st retry | 30 seconds |
+| 2nd retry | 2 minutes |
+| 3rd retry | 10 minutes |
+| 4th retry | 30 minutes |
+| 5th retry | 2 hours |
+
+After **5 failed attempts** mFoundry stops retrying and marks the webhook delivery as permanently failed. Design your endpoint to be idempotent — because network hiccups can occasionally cause a successful delivery to be retried, your system should handle receiving the same event payload more than once without side effects.
+
+<Note>
+  Review the full history of webhook delivery attempts — including request headers, response codes, and response bodies — in **Settings > Webhooks > Delivery History**. Use this log to diagnose failures and manually replay specific deliveries during debugging.
+</Note>

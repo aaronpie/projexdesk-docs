@@ -1,0 +1,56 @@
+---
+title: "Configure Your mFoundry Organization Settings"
+sidebarTitle: "Settings"
+description: "Manage organization name, billing, security settings, and default preferences from the mFoundry Settings panel for admins and owners."
+---
+
+The Settings panel is your organization's central control hub, where you configure everything from your org's identity and security posture to billing details and API access. Only users with the **Owner** or **Admin** role can view and edit Settings — members and guests see this panel as restricted. Reach it at any time by clicking your organization avatar in the top navigation and selecting **Settings**.
+
+<Note>
+  Only **Owners** and **Admins** can access the Settings panel. If you need to make changes and don't see the Settings option, ask your organization Owner to upgrade your role.
+</Note>
+
+## General
+
+The General section controls your organization's public identity and regional preferences.
+
+- **Organization Name** — The display name shown across the dashboard, emails, and shared links. Update it at any time.
+- **Organization Slug** — A URL-safe identifier (e.g., `acme-corp`) used in your mFoundry workspace URL. The slug is set during organization creation and is **read-only** afterwards. Contact support if you need a slug change.
+- **Logo** — Upload a square PNG or SVG (minimum 128×128 px) to brand your workspace. This logo appears in the top navigation and email notifications.
+- **Timezone** — Set the default timezone used for scheduled workflows, audit logs, and notification timestamps. Individual members can override this in their personal profile.
+
+## Security
+
+Use the Security section to enforce organization-wide access controls and reduce your attack surface.
+
+- **Enforce MFA for All Members** — Toggle this on to require every member to set up multi-factor authentication before accessing the workspace. Members who haven't enrolled are locked out until they complete MFA setup.
+- **Session Timeout** — Define how long an idle authenticated session remains valid. Options range from 15 minutes to 30 days. Shorter timeouts improve security; longer timeouts reduce friction for active users.
+- **Allowed IP Ranges** — Restrict dashboard and API access to a comma-separated list of IPv4 or IPv6 CIDR ranges (e.g., `203.0.113.0/24`). Leave this field empty to allow access from any IP. When set, requests from outside the allowed ranges receive a `403 Forbidden` response.
+
+## Billing
+
+The Billing section gives you full visibility into your subscription and lets you manage payment details without contacting support.
+
+- **Current Plan** — View your active plan tier, renewal date, and included feature limits at a glance.
+- **Usage** — Monitor your current-period consumption of workflows, API calls, and team seats against your plan's limits. Usage resets on your billing cycle date.
+- **Update Payment Method** — Add or replace a credit card or ACH bank account. mFoundry uses Stripe for secure payment processing — your card details are never stored on mFoundry servers.
+- **Download Invoices** — Access a full history of past invoices as PDFs. Each invoice lists the billing period, plan, and any add-ons charged.
+
+## API Keys
+
+API keys grant programmatic access to your mFoundry workspace. Treat them like passwords — never commit them to source control.
+
+- **List Keys** — All active API keys are listed with their name, creation date, and last-used timestamp.
+- **Create a Key** — Click **New API Key**, provide a descriptive name (e.g., `ci-pipeline-prod`), and copy the key immediately. mFoundry displays the full key only once at creation time.
+- **Revoke a Key** — Click **Revoke** next to any key to invalidate it instantly. Any in-flight requests using that key will begin receiving `401 Unauthorized` responses.
+
+For full details on authenticating API requests, see the [Authentication guide](/getting-started/authentication).
+
+## Notifications
+
+The Notifications section lets you define organization-wide default rules that apply to all members who haven't customized their own preferences.
+
+- Set default channels (email, Slack, in-app) for each event category such as workflow completions, task assignments, and billing alerts.
+- Members can always override organization defaults from their personal notification preferences.
+
+For a complete walkthrough of notification rules and per-member overrides, see the [Notifications guide](/guides/notifications).

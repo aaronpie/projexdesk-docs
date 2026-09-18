@@ -1,0 +1,106 @@
+---
+title: "Troubleshoot Common mFoundry Issues"
+sidebarTitle: "Troubleshooting"
+description: "Diagnose and resolve common problems in mFoundry including authentication failures, webhook delivery errors, and integration connectivity issues."
+---
+
+When something isn't working as expected, a systematic approach gets you to the root cause fastest: check the error code or message first, consult the relevant section below, and verify in the audit log or delivery history whether the problem is in mFoundry or in a downstream system. Most issues fall into one of four categories — authentication, webhooks, integrations, or performance — and each has clear diagnostic steps you can work through without waiting for support. If you exhaust the steps here and the issue persists, the team is ready to help.
+
+<Note>
+  Still stuck? Email **support@mfoundry.io** or open a support ticket directly from the dashboard by clicking the **Help** icon in the bottom-left navigation and selecting **Open a Ticket**. Include the error code, affected resource ID, and approximate time of the incident to help the team respond faster.
+</Note>
+
+## Authentication Issues
+
+Authentication failures surface as HTTP `401` or `403` responses and almost always come down to a key problem or a permissions mismatch.
+
+| Error | Likely Cause | Fix |
+|---|---|---|
+| `401 Unauthorized` | API key is invalid, has been revoked, or was copied with extra whitespace | Verify the key in **Settings > API Keys**. Revoke and regenerate if necessary. Ensure there are no leading/trailing spaces in the `Authorization` header value. |
+| `401 Unauthorized` | API key has expired (custom expiry set at creation) | Check the expiry date shown next to the key in **Settings > API Keys** and create a new key. |
+| `403 Forbidden` | The API key's associated role lacks permission for the requested resource | Review the role assigned to the key. Admin-level operations require an Owner or Admin key. Adjust the key's role or use a key with higher privileges. |
+| `403 Forbidden` | Request origin is outside the organization's allowed IP ranges | Check **Settings > Security > Allowed IP Ranges**. Add the calling IP or CIDR range, or temporarily disable IP restrictions for debugging. |
+
+**Debugging tip:** Pass the `-v` flag with cURL or inspect the `WWW-Authenticate` response header — mFoundry includes a machine-readable error code and a human-readable message in every 4xx response body:
+
+```json
+{
+  "error": "unauthorized",
+  "message": "API key has been revoked.",
+  "docs": "https://docs.mfoundry.io/getting-started/authentication"
+}
+```
+
+## Webhook Failures
+
+Webhook delivery problems fall into three categories: the endpoint is unreachable, the signature doesn't match, or your endpoint can't parse the payload.
+
+**Checking delivery logs:**
+
+Open **Settings > Webhooks**, click the webhook in question, and select the **Delivery History** tab. Each entry shows the event type, delivery timestamp, HTTP response code your endpoint returned, and the full response body. Use this log as your first stop — it tells you exactly what mFoundry sent and how your endpoint responded.
+
+**Endpoint unreachable:**
+
+- Confirm the endpoint URL is publicly accessible. mFoundry cannot reach internal or localhost addresses.
+- Check that your server or load balancer accepts POST requests and does not redirect HTTPS to HTTP (mFoundry does not follow redirects).
+- Verify TLS certificate validity — expired or self-signed certificates cause connection failures.
+- Temporarily use a tool like [Webhook.site](https://webhook.site) as a test endpoint to confirm mFoundry is sending the payload correctly.
+
+**Signature mismatch:**
+
+- Ensure you are computing the HMAC using the **raw, unparsed request body** — not a re-serialized JSON object. Parsing and re-stringifying changes whitespace and key order, which alters the signature.
+- Confirm you are using the correct secret key for this specific webhook. Each webhook has its own unique secret.
+- See [Verifying Signatures](/configuration/webhooks#verifying-signatures) for the reference Node.js implementation.
+
+**Payload parsing errors:**
+
+- Verify your endpoint reads the `Content-Type: application/json` header and parses the body as JSON.
+- Check for middleware (e.g., body-parser or framework defaults) that may consume or transform the raw body before your signature verification code runs.
+
+## Integration Problems
+
+Native integrations (Slack, GitHub, Jira) use OAuth tokens that can expire or lose their granted scopes.
+
+**OAuth token expired:**
+
+Symptoms: the integration shows a red **Disconnected** badge in **Settings > Integrations**, or workflow steps using the integration return authorization errors in their run logs.
+
+To re-authorize:
+
+<Steps>
+  <Step title="Open Settings > Integrations">
+    Navigate to **Settings > Integrations** and locate the affected integration.
+  </Step>
+  <Step title="Click Reconnect">
+    Click **Reconnect** (or **Re-authorize**) next to the integration. You are redirected to the provider's OAuth consent screen.
+  </Step>
+  <Step title="Grant the required permissions">
+    Sign in to the provider and approve the requested scopes. mFoundry displays the exact permissions it needs — do not deselect any listed scope or the integration will partially fail.
+  </Step>
+  <Step title="Confirm the connection">
+    After approving, you are redirected back to mFoundry. The integration status changes to **Connected**. Trigger a test workflow to confirm the connection is working end to end.
+  </Step>
+</Steps>
+
+**Scope mismatch:**
+
+If you previously authorized with fewer scopes than mFoundry now requires (due to a feature update), the integration status shows a **Scope Warning** badge. Follow the same reconnection steps above — the OAuth prompt will request the additional scopes. If you are not the account owner on the provider side, coordinate with whoever manages those credentials.
+
+## Performance
+
+**Slow API responses:**
+
+- Check the [mFoundry Status Page](https://status.mfoundry.io) first — elevated response times during a platform incident are not something you can resolve locally.
+- Reduce payload size by using field selection parameters where available to fetch only the properties your application needs.
+- Cache responses for resources that change infrequently (e.g., organization settings, member lists) rather than fetching them on every request.
+- Move non-critical API calls to background jobs so they don't block user-facing request paths.
+
+**Rate limit errors (429):**
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| Burst of `429` responses at a predictable interval | Fan-out: multiple services sharing one API key all fire at the same time | Issue a separate API key per service so rate limits are isolated |
+| `429` during scheduled jobs | Polling too frequently | Increase the polling interval or switch to webhooks to eliminate polling entirely |
+| `429` during data migrations or backfills | High-volume sequential requests | Add a delay of at least 60ms between requests, or process records in smaller batches with a pause between batches |
+
+The `Retry-After` header on a `429` response tells you exactly how many seconds to wait. Honor it — retrying sooner resets the backoff and prolongs the lock-out window.

@@ -1,0 +1,119 @@
+---
+title: "mFoundry Data Model: Organizations and Projects"
+sidebarTitle: "Data Model"
+description: "Understand how mFoundry structures your data across organizations, projects, workflows, and tasks — and how they relate to users and permissions."
+---
+
+Every resource in mFoundry exists within a strict, relational hierarchy that makes ownership, access control, and billing straightforward to reason about. At the top sits the **Organization**, which acts as the root namespace for all of your data. Organizations contain **Projects**, projects contain **Workflows**, and workflows decompose into individual **Tasks** at runtime. **Users** are members of one or more organizations and inherit permissions through their assigned roles. Understanding the fields and relationships that make up these entities helps you build integrations, write API queries, and design access-control policies with confidence.
+
+<Note>
+  All `id` fields across every entity are **UUIDs (version 4)**. When referencing a resource in the API or in webhook payloads, always use the full UUID string — human-readable slugs and names are for display purposes only and may change.
+</Note>
+
+---
+
+## Organization
+
+An organization is the top-level container for everything your company owns in mFoundry. It holds your member roster, billing details, and organization-wide settings. Each organization has a globally unique slug used in dashboard URLs and certain API routes.
+
+<ResponseField name="id" type="string" required>
+  The unique UUID that permanently identifies this organization. Use this field when referencing the organization in API requests and webhook payloads.
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  The human-readable display name of the organization, shown in the dashboard header and on invoices.
+</ResponseField>
+
+<ResponseField name="slug" type="string" required>
+  A URL-safe, globally unique identifier for the organization (e.g. `acme-corp`). The slug appears in dashboard URLs and can be updated by an Owner in **Settings → General**.
+</ResponseField>
+
+<ResponseField name="created_at" type="string (ISO 8601)">
+  The UTC timestamp at which the organization was created. This field is read-only and set by the server.
+</ResponseField>
+
+---
+
+## Project
+
+A project belongs to exactly one organization and serves as the primary workspace for a product, initiative, or client engagement. Projects group workflows together and define which team members have access to those workflows through role assignments.
+
+<ResponseField name="id" type="string" required>
+  The unique UUID that identifies this project. Immutable after creation.
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  The display name of the project. Must be unique within the parent organization.
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  An optional plain-text description that helps team members understand the project's purpose and scope.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+  The current lifecycle state of the project. Accepted values are `active`, `paused`, and `archived`.
+</ResponseField>
+
+<ResponseField name="org_id" type="string" required>
+  The UUID of the organization this project belongs to. Used in API routes and for access-control evaluation.
+</ResponseField>
+
+<ResponseField name="created_at" type="string (ISO 8601)">
+  The UTC timestamp at which the project was created. Set by the server and read-only.
+</ResponseField>
+
+<ResponseField name="updated_at" type="string (ISO 8601)">
+  The UTC timestamp of the most recent change to the project's metadata. Automatically updated on every write operation.
+</ResponseField>
+
+---
+
+## Workflow
+
+A workflow is an ordered sequence of steps that lives inside a project. Each workflow is independently versioned, meaning you can edit and test changes without affecting live executions. When a workflow is triggered — either manually, on a schedule, or by an incoming webhook — mFoundry creates a workflow run and spawns individual task records for each step.
+
+<ResponseField name="id" type="string" required>
+  The unique UUID that identifies this workflow. Immutable after creation.
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  The display name of the workflow, visible in the project dashboard and in API responses.
+</ResponseField>
+
+<ResponseField name="project_id" type="string" required>
+  The UUID of the project this workflow belongs to. Determines which members can view and edit the workflow based on project-level roles.
+</ResponseField>
+
+<ResponseField name="steps" type="array">
+  An ordered array of step objects that define the workflow's logic. Each step specifies an action type, configuration, and any conditional branching rules.
+</ResponseField>
+
+<ResponseField name="created_at" type="string (ISO 8601)">
+  The UTC timestamp at which the workflow was created. Set by the server and read-only.
+</ResponseField>
+
+---
+
+## User
+
+A user represents a human or service account that has been granted membership to one or more organizations. Users authenticate via email and password or SSO, and interact with mFoundry through the dashboard or the API using personal access tokens.
+
+<ResponseField name="id" type="string" required>
+  The unique UUID that identifies this user across all organizations. Immutable after account creation.
+</ResponseField>
+
+<ResponseField name="email" type="string" required>
+  The user's verified email address, used for authentication, notifications, and as the primary contact identifier.
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  The user's display name as shown in the dashboard, activity feed, and audit logs.
+</ResponseField>
+
+<ResponseField name="role" type="string" required>
+  The user's role within a given organization or project context. Accepted values are `owner`, `admin`, `member`, and `viewer`. See [Key Features → Team Collaboration](/concepts/key-features#team-collaboration) for a full permissions breakdown.
+</ResponseField>
+
+<ResponseField name="created_at" type="string (ISO 8601)">
+  The UTC timestamp at which the user account was created. Set by the server and read-only.
+</ResponseField>

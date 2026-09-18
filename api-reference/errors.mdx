@@ -1,0 +1,68 @@
+---
+title: "REST API Error Codes and Responses"
+sidebarTitle: "Errors"
+description: "mFoundry API errors follow a consistent JSON format with status codes, error codes, and messages to help you handle failures gracefully."
+---
+
+When the mFoundry API cannot fulfil a request, it returns a JSON error object alongside the appropriate HTTP status code. Every error response follows the same predictable structure, so you can write a single error-handling layer in your integration rather than special-casing each endpoint. The `error.code` field is machine-readable and stable across API versions — use it to drive branching logic in your code.
+
+## Error Response Format
+
+All API errors return a JSON body with a top-level `error` object:
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "The requested project was not found.",
+    "status": 404
+  }
+}
+```
+
+<ResponseField name="error.code" type="string">
+  A stable, machine-readable identifier for the error type (for example, `not_found` or `rate_limited`). Use this field — not the HTTP status code alone — to drive your error-handling logic.
+</ResponseField>
+
+<ResponseField name="error.message" type="string">
+  A human-readable description of what went wrong. This message is intended for developers and logging; do not display it verbatim to end users without sanitization.
+</ResponseField>
+
+<ResponseField name="error.status" type="integer">
+  The HTTP status code associated with this error. This mirrors the actual HTTP response status so you can access the value from within the JSON body if needed.
+</ResponseField>
+
+## HTTP Status Codes
+
+The API uses standard HTTP status codes to indicate the outcome of every request:
+
+| Status | Meaning |
+|---|---|
+| `200` | **Success** — the request completed successfully |
+| `201` | **Created** — a new resource was successfully created |
+| `400` | **Bad Request** — the request was malformed or contained invalid input |
+| `401` | **Unauthorized** — the API key is missing or invalid |
+| `403` | **Forbidden** — the API key does not have permission for this resource |
+| `404` | **Not Found** — the requested resource does not exist |
+| `409` | **Conflict** — the resource already exists or the action conflicts with current state |
+| `422` | **Unprocessable Entity** — the request was well-formed but failed validation rules |
+| `429` | **Too Many Requests** — you have exceeded the rate limit; slow down and retry |
+| `500` | **Internal Server Error** — something went wrong on the mFoundry side |
+
+## Error Codes
+
+Beyond HTTP status codes, the API includes an application-level `error.code` in every error response. These codes are stable and versioned independently from HTTP semantics:
+
+| Code | Status | Description |
+|---|---|---|
+| `invalid_input` | `400` | One or more request fields are missing, the wrong type, or out of range |
+| `not_found` | `404` | The referenced resource (project, user, webhook) does not exist |
+| `unauthorized` | `401` | No valid API key was provided, or the key has been revoked |
+| `forbidden` | `403` | The API key is valid but lacks permission for the requested action |
+| `conflict` | `409` | A resource with the same unique identifier or constraints already exists |
+| `rate_limited` | `429` | The request was rejected because you exceeded 1,000 requests per minute |
+| `internal_error` | `500` | An unexpected server-side error occurred; try again or contact support |
+
+<Tip>
+Build your error-handling logic around `error.code` rather than the raw HTTP status code. HTTP status codes are sometimes ambiguous (multiple scenarios map to `400`, for example), whereas `error.code` values are specific and stable, making them far more reliable for programmatic branching.
+</Tip>

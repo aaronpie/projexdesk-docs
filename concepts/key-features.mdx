@@ -1,0 +1,50 @@
+---
+title: "Key Features and Capabilities of mFoundry"
+sidebarTitle: "Key Features"
+description: "Explore mFoundry's core capabilities: dashboard management, team collaboration, real-time notifications, webhooks, integrations, and a powerful REST API."
+---
+
+mFoundry brings every tool you need to build, manage, and scale your workflows into a single, cohesive platform. Rather than juggling a patchwork of disconnected services, you get a unified dashboard, a robust collaboration layer, real-time event visibility, deep third-party integrations, and a fully documented REST API — all working together so your team can focus on building rather than babysitting infrastructure.
+
+## Dashboard
+
+The mFoundry dashboard gives you a visual command center for every project in your organization. From a single screen you can monitor recent activity, track workflow run status, and review key metrics like task success rates and average execution time. The dashboard surfaces the information most relevant to your current work, so you always know what needs attention without digging through logs.
+
+<Info>
+  The dashboard supports **customizable widgets** — pin the metrics, project summaries, or activity feeds that matter most to your team. Open **Settings → Dashboard** to add, remove, or reorder widgets at any time.
+</Info>
+
+## Team Collaboration
+
+mFoundry lets you invite teammates directly from the **Members** page inside your organization settings and assign each person a role that matches their responsibilities. Roles cascade from the organization level down to individual projects, so you can give someone broad access organization-wide or restrict them to a single project.
+
+| Role    | Permissions                                                     |
+|---------|-----------------------------------------------------------------|
+| Owner   | Full control including billing, deletion, and member management |
+| Admin   | Manage members, projects, workflows, and integrations           |
+| Member  | Create and edit projects and workflows; cannot manage members   |
+| Viewer  | Read-only access to projects and workflow runs                  |
+
+## Real-Time Notifications
+
+mFoundry delivers instant in-app and email notifications whenever something important happens in your projects — workflow failures, new comments, status changes, and more. Each notification links directly to the resource it references, so you can jump straight to the relevant workflow run or task without hunting through the dashboard.
+
+Adjust which events trigger notifications and how you receive them by visiting **Settings → Notifications** in your account preferences. You can configure preferences at the organization level or override them on a per-project basis.
+
+## Webhooks & Integrations
+
+Connect mFoundry to the tools your team already uses — including Slack, GitHub, Jira, and dozens of other services — through the **Integrations** panel in any project. Each integration can both receive data from external services and push updates back when a workflow completes or a task changes state.
+
+Webhooks let you define exactly which events trigger an outbound HTTP call, configure custom headers, and inspect delivery logs to debug failures. Every webhook delivery is automatically retried with exponential backoff, so transient network issues never cause you to miss a critical event.
+
+## REST API
+
+Every capability available in the mFoundry dashboard is also accessible programmatically through the mFoundry REST API. Authenticate with a token-based API key, then create projects, trigger workflow runs, query task status, and manage members — all from your own code or CI/CD pipelines.
+
+The API follows RESTful conventions, returns JSON responses, and uses standard HTTP status codes. Full reference documentation, request/response schemas, and interactive examples are available at [API Reference](/api-reference/introduction).
+
+---
+
+<Tip>
+  Want a feature that isn't listed here? mFoundry ships updates regularly based on customer feedback. Visit the **mFoundry Roadmap** from the help menu in your dashboard to upvote existing requests or submit a new one — the product team reviews submissions every sprint.
+</Tip>

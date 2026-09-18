@@ -1,0 +1,51 @@
+---
+title: "Frequently Asked Questions About mFoundry"
+sidebarTitle: "FAQ"
+description: "Find answers to common questions about mFoundry accounts, billing, API limits, permissions, integrations, and data security."
+---
+
+This FAQ collects the questions our users ask most often, organized by topic so you can jump straight to what you need. Whether you're sorting out a billing change, understanding API rate limits, or verifying how mFoundry handles your data, you'll find a direct answer below. If your question isn't covered here, reach out to the team at support@mfoundry.io or open a ticket from the dashboard help menu.
+
+## Account & Billing
+
+<AccordionGroup>
+  <Accordion title="How do I change my plan?">
+    Navigate to **Settings > Billing** and click **Change Plan**. You see a side-by-side comparison of available tiers with their feature limits and pricing. Select the plan you want, confirm the proration calculation, and click **Confirm Upgrade** or **Confirm Downgrade**. Plan changes take effect immediately — upgrades unlock features right away, and downgrades apply at the end of your current billing cycle.
+  </Accordion>
+
+  <Accordion title="Can I add multiple organizations?">
+    Yes. mFoundry supports multiple organizations under a single user account. To create a new organization, click your current organization name in the top navigation to open the **org switcher**, then click **Create New Organization**. Each organization has its own members, projects, billing, and settings. You switch between organizations at any time from the same org switcher.
+  </Accordion>
+
+  <Accordion title="How do I cancel my subscription?">
+    Go to **Settings > Billing** and click **Cancel Subscription**. You are asked to confirm the cancellation and optionally provide a reason. Your workspace remains fully accessible through the end of the current billing period. After that, the account moves to a read-only state and your data is retained for **30 days**, giving you time to export anything you need before permanent deletion.
+  </Accordion>
+</AccordionGroup>
+
+## API & Integrations
+
+<AccordionGroup>
+  <Accordion title="What are the API rate limits?">
+    Each API key is limited to **1,000 requests per minute**. When you exceed this limit, the API returns a `429 Too Many Requests` response with a `Retry-After` header indicating how many seconds to wait before retrying. Rate limit counters reset on a rolling 60-second window. If your use case requires higher limits, contact sales to discuss an enterprise plan with elevated quotas.
+  </Accordion>
+
+  <Accordion title="How do I rotate my API key?">
+    Rotating a key is a two-step process: revoke the old key and immediately create a replacement. Go to **Settings > API Keys**, find the key you want to rotate, and click **Revoke**. The key is invalidated instantly. Then click **New API Key**, name it, and copy the new key — it is shown only once. Update any services or environment variables that use the old key before revoking it to avoid downtime.
+  </Accordion>
+
+  <Accordion title="Which integrations are supported?">
+    mFoundry ships with native integrations for **Slack**, **GitHub**, and **Jira**. Native integrations offer one-click OAuth setup, pre-built event mappings, and managed token refresh. For any tool without a native integration, use the [Webhooks](/configuration/webhooks) system to push mFoundry events to any HTTPS endpoint, or call external APIs directly from workflow steps using the HTTP action. Custom integrations built on webhooks work with virtually any platform that accepts HTTP POST requests.
+  </Accordion>
+</AccordionGroup>
+
+## Security & Data
+
+<AccordionGroup>
+  <Accordion title="Is my data encrypted?">
+    Yes. mFoundry encrypts all customer data **at rest** using **AES-256** and **in transit** using **TLS 1.2 or higher**. Environment variable values, API keys, and OAuth tokens receive an additional layer of application-level encryption before being written to the database. mFoundry undergoes regular third-party security audits, and the results are available to enterprise customers under NDA.
+  </Accordion>
+
+  <Accordion title="Can I export my data?">
+    Yes. Go to **Settings > Data > Export** and click **Request Export**. mFoundry packages your projects, workflows, audit logs, and configuration into a structured archive and sends a secure, time-limited download link to your account email within a few minutes. Exports are available on all paid plans. If you're in the process of canceling, initiate an export before the end of your billing period to ensure access.
+  </Accordion>
+</AccordionGroup>

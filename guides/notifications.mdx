@@ -1,0 +1,52 @@
+---
+title: "Configure Notifications and Alerts in mFoundry"
+sidebarTitle: "Notifications"
+description: "Set up in-app, email, and Slack notifications for project events in mFoundry to keep your team informed in real time."
+---
+
+mFoundry's notification system keeps every member of your team aware of the activity that matters to them — without flooding inboxes or chat channels with noise they can ignore. You can deliver alerts through in-app banners, email digests, Slack messages, or outbound webhooks, and you can tune each channel per event type so people receive exactly the signal they need.
+
+## Notification Channels
+
+mFoundry supports four delivery channels. Each can be enabled or disabled independently, and most can be configured at both the organization and the individual project level.
+
+| Channel | Delivery | Configurable By |
+|---------|----------|-----------------|
+| In-App | Real-time banner and notification bell inside mFoundry | Every member |
+| Email | Immediate or digest emails to the member's registered address | Every member |
+| Slack | Message posted to a connected Slack channel | Admins and Owners |
+| Webhook | HTTP POST to a custom endpoint with a structured JSON payload | Admins and Owners |
+
+## Configuring Notification Preferences
+
+Tailor which events reach you and how by following these steps in your account settings.
+
+<Steps>
+  <Step title="Go to Settings > Notifications">
+    Click **Settings** in the left sidebar, then select the **Notifications** tab. You will see a list of event categories alongside toggle controls for each delivery channel.
+  </Step>
+  <Step title="Choose which events trigger notifications">
+    Enable or disable notifications for each event type that mFoundry tracks, including:
+    - **Project created** — a new project is added to your organization
+    - **Workflow completed** — a workflow run finishes successfully or with errors
+    - **Task assigned** — a task is assigned to you or a teammate you follow
+    - **Member invited** — a new person joins your organization or project
+    - **Integration status changed** — a connected integration connects or disconnects
+  </Step>
+  <Step title="Select delivery channels per event type">
+    For each event you have enabled, use the channel checkboxes to choose where the notification appears. You can, for example, send workflow completions to Slack while routing task assignments only to email and in-app.
+  </Step>
+  <Step title="Save your preferences">
+    Click **Save Preferences** at the bottom of the page. Your settings take effect immediately — the next matching event will be delivered through the channels you selected.
+  </Step>
+</Steps>
+
+## Project-Level Notifications
+
+Organization owners and admins can set default notification rules that apply to all members across the organization. These org-wide defaults act as a baseline: they ensure everyone is at least notified about critical events such as integration failures or security-related changes.
+
+Individual members can override these defaults on a per-project basis. To do this, navigate to the specific project, open **Project Settings > Notifications**, and adjust the toggles to match your preferred channels and event types. Your project-level settings take precedence over the org-wide defaults for that project only, leaving other projects unaffected.
+
+<Tip>
+  For teams with advanced alerting requirements — such as routing critical workflow failures to an on-call system like PagerDuty — use mFoundry's webhook channel to push structured event payloads to any HTTPS endpoint. See the [Webhooks configuration guide](/configuration/webhooks) to learn how to set up signatures, retries, and delivery logging.
+</Tip>

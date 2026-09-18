@@ -1,0 +1,39 @@
+---
+title: "mFoundry Glossary: Key Terms Explained"
+sidebarTitle: "Terminology"
+description: "A reference glossary of mFoundry terms including organization, project, workflow, webhook, API key, and role — with concise definitions."
+---
+
+This glossary defines the key terms you'll encounter while working with mFoundry — whether you're navigating the dashboard, writing API requests, or reading through these docs. Each entry gives you a plain-English definition along with notes on where the concept appears in the UI or API, so you can move quickly without stopping to look things up. Terms are listed in alphabetical order for easy reference.
+
+<Accordion title="API Key">
+  An API key is a secret token that authenticates your application or script when making requests to the mFoundry REST API. You generate API keys in **Settings → API Keys**, and each key can be scoped to specific permissions and given an optional expiry date. Treat your API key like a password — never commit it to source control or share it publicly.
+</Accordion>
+
+<Accordion title="Integration">
+  An integration is a configured connection between mFoundry and a third-party service such as Slack, GitHub, or Jira. Integrations allow your workflows to send data to external tools and receive incoming events that can trigger workflow runs. You manage integrations at the project level from the **Integrations** tab in your project settings.
+</Accordion>
+
+<Accordion title="Organization">
+  An organization is the top-level account container in mFoundry that holds all of your projects, members, and billing information. Every mFoundry user belongs to at least one organization, and resources cannot exist outside of one. You can belong to multiple organizations simultaneously, each with its own independent settings and member roster.
+</Accordion>
+
+<Accordion title="Project">
+  A project is a named workspace inside an organization that groups related workflows, integrations, and activity together. Projects have a lifecycle status (`active`, `paused`, or `archived`) and support per-project role assignments so you can control access independently of your org-wide settings. Every project appears as a card on your organization's main dashboard page.
+</Accordion>
+
+<Accordion title="Role">
+  A role defines what actions a user is permitted to perform within an organization or project. mFoundry has four built-in roles — **Owner**, **Admin**, **Member**, and **Viewer** — arranged in descending order of privilege. Roles are assigned when you invite a member or at any time from the **Members** settings page.
+</Accordion>
+
+<Accordion title="Task">
+  A task is the atomic, runtime record of a single step executing inside a workflow run. Each task captures the step's inputs, outputs, status (`pending`, `running`, `succeeded`, or `failed`), and any logs generated during execution. You can view, retry, or cancel individual tasks from the workflow run detail page or via the Tasks API endpoint.
+</Accordion>
+
+<Accordion title="Webhook">
+  A webhook is an outbound HTTP request that mFoundry sends to a URL you specify whenever a configured event occurs — such as a workflow completing, a task failing, or a project status changing. Webhooks include a JSON payload describing the event and a signature header you can use to verify authenticity. You configure webhooks per project under **Settings → Webhooks**, and delivery logs are retained for 30 days.
+</Accordion>
+
+<Accordion title="Workflow">
+  A workflow is an ordered, versioned sequence of steps that automates a process inside a project. Workflows can be triggered manually from the dashboard, on a recurring schedule, or automatically via an incoming webhook or integration event. Each time a workflow runs, mFoundry creates a workflow run record and individual task records for each step, giving you a full audit trail of every execution.
+</Accordion>

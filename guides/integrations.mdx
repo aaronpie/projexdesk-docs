@@ -1,0 +1,50 @@
+---
+title: "Connect Third-Party Integrations in mFoundry"
+sidebarTitle: "Integrations"
+description: "Integrate mFoundry with Slack, GitHub, Jira, and other tools using built-in connectors or custom webhooks to automate your workflow."
+---
+
+mFoundry connects directly with the tools your team already uses, so you can automate handoffs, surface the right information in the right place, and reduce context-switching. You can choose from a set of built-in integrations that take only a few clicks to activate, or define your own custom webhooks for any service that exposes an HTTP endpoint.
+
+## Built-In Integrations
+
+mFoundry ships with native connectors for the most widely used collaboration and development platforms. Each connector handles authentication, payload mapping, and event routing for you out of the box.
+
+<CardGroup cols={3}>
+  <Card title="Slack" icon="slack">
+    Receive real-time project notifications in any Slack channel — including workflow completions, task assignments, and status changes.
+  </Card>
+  <Card title="GitHub" icon="github">
+    Link commits, pull requests, and releases to mFoundry projects so your workflow context stays connected to your code history.
+  </Card>
+  <Card title="Jira" icon="plug">
+    Sync Jira issues with mFoundry tasks bidirectionally, keeping your backlog and your workflows in lock-step without manual updates.
+  </Card>
+</CardGroup>
+
+## Connecting an Integration
+
+Activating any built-in integration follows the same straightforward flow regardless of which service you are connecting.
+
+<Steps>
+  <Step title="Go to Settings > Integrations">
+    From the left sidebar, click **Settings**, then select the **Integrations** tab. You will see all available integrations listed with their current connection status.
+  </Step>
+  <Step title="Click the integration you want">
+    Select the card for the integration you want to enable. This opens the integration detail panel, which shows a description, required permissions, and configuration options.
+  </Step>
+  <Step title="Authorize with OAuth or paste an API token">
+    Depending on the service, you will either be redirected to an OAuth consent screen — where you approve the requested permissions in your third-party account — or prompted to paste a personal access token or webhook secret directly into mFoundry.
+  </Step>
+  <Step title="Configure triggers and mapped projects">
+    After authorization, choose which mFoundry events should trigger activity in the connected service (for example, "workflow completed" → post to #deployments in Slack). Map the integration to one or more projects, then click **Save Configuration** to activate it.
+  </Step>
+</Steps>
+
+## Custom Webhooks
+
+If the service you need is not listed as a built-in integration, mFoundry's custom webhook system lets you send event payloads to any HTTPS endpoint you control. You can configure webhook URLs, select the events that trigger them, and inspect delivery logs all from one place. See the [Webhooks configuration guide](/configuration/webhooks) for full details on payload schemas, retry behavior, and signature verification.
+
+<Note>
+  Each integration requests only the permissions it needs to function. Review the listed scopes on the integration detail panel before authorizing — Slack requires channel write access, GitHub requires repository read access and webhook write access, and Jira requires issue read/write access. You can revoke access at any time from Settings > Integrations without affecting your mFoundry data.
+</Note>

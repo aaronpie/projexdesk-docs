@@ -1,0 +1,96 @@
+---
+title: "Create Your First Project in mFoundry"
+sidebarTitle: "First Project"
+description: "Walk through creating a project, adding a workflow, and inviting teammates in mFoundry from the dashboard and via the REST API."
+---
+
+Projects are the foundation of everything you build in mFoundry — they group your workflows, collaborators, and configuration into a single, manageable unit. This guide walks you through creating your first project, attaching a workflow to it, and bringing in a teammate, whether you prefer clicking through the dashboard or scripting with the REST API.
+
+<Tabs>
+  <Tab title="Dashboard">
+    <Steps>
+      <Step title="Open Projects and create a new one">
+        From the mFoundry dashboard, navigate to the **Projects** section in the left sidebar. Click **New Project** in the top-right corner to open the project creation dialog.
+      </Step>
+      <Step title="Enter a name and description">
+        Type a clear, recognizable name for your project and add an optional description that tells teammates what the project is for. Click **Create Project** to save it and land on the project overview page.
+      </Step>
+      <Step title="Add a workflow">
+        Inside your new project, select the **Workflows** tab. Click **Add Workflow**, give it a name, and use the workflow builder to define your first steps. Save the workflow when you are ready — it will appear in the workflows list immediately.
+      </Step>
+      <Step title="Invite a collaborator">
+        Navigate to the **Members** tab within the project. Click **Invite Member**, enter your teammate's email address, and choose an appropriate role. Click **Send Invite** — they will receive an email with a link to join.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="API">
+    Before making API calls, make sure you have a valid API token. Include it as a Bearer token in every request header.
+
+    **Step 1 — Create a project**
+
+    ```bash
+    curl -X POST https://api.mfoundry.io/v1/projects \
+      -H "Authorization: Bearer YOUR_API_TOKEN" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "My First Project",
+        "description": "An introductory project to explore mFoundry."
+      }'
+    ```
+
+    Sample response:
+
+    ```json
+    {
+      "id": "proj_01hx9k2m3n4p5q6r",
+      "name": "My First Project",
+      "description": "An introductory project to explore mFoundry.",
+      "created_at": "2024-06-01T10:00:00Z",
+      "status": "active"
+    }
+    ```
+
+    **Step 2 — Add a workflow to the project**
+
+    Use the `id` returned above as the `{id}` path parameter:
+
+    ```bash
+    curl -X POST https://api.mfoundry.io/v1/projects/proj_01hx9k2m3n4p5q6r/workflows \
+      -H "Authorization: Bearer YOUR_API_TOKEN" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "Onboarding Workflow",
+        "steps": []
+      }'
+    ```
+
+    Sample response:
+
+    ```json
+    {
+      "id": "wf_07yz8a1b2c3d4e5f",
+      "project_id": "proj_01hx9k2m3n4p5q6r",
+      "name": "Onboarding Workflow",
+      "steps": [],
+      "created_at": "2024-06-01T10:05:00Z"
+    }
+    ```
+
+    You can populate `steps` with an array of step objects once you are ready to define your workflow logic. An empty array creates a blank workflow you can edit later in the dashboard or via subsequent API calls.
+  </Tab>
+</Tabs>
+
+<Tip>
+  Organize your projects by team or product area — for example, "Platform — Infra" or "Growth — Onboarding" — to make it easier for teammates to find what they own and for you to apply consistent notification and access settings at scale.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Connect Integrations" icon="plug" href="/guides/integrations">
+    Link mFoundry to Slack, GitHub, Jira, and other tools to automate your workflow and keep all your context in one place.
+  </Card>
+  <Card title="Manage Your Team" icon="users" href="/guides/team-management">
+    Invite teammates, assign roles, and control who can view or edit projects using mFoundry's role-based access controls.
+  </Card>
+</CardGroup>

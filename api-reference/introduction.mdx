@@ -1,0 +1,74 @@
+---
+title: "mFoundry REST API Reference Overview"
+sidebarTitle: "Introduction"
+description: "The mFoundry REST API lets you programmatically manage projects, users, and webhooks. Base URL, versioning, and rate limit details explained here."
+---
+
+The mFoundry REST API gives you full programmatic control over your organization's projects, users, and webhooks. Every API request travels over HTTPS to the base URL `https://api.mfoundry.io/v1`, and every response returns JSON — making it straightforward to integrate mFoundry into your own tooling, automate workflows, or build custom dashboards on top of the platform.
+
+## Base URL
+
+All API endpoints are relative to the following base URL:
+
+```
+https://api.mfoundry.io/v1
+```
+
+Include this prefix before every endpoint path shown in this reference. For example, the full URL for listing projects is `https://api.mfoundry.io/v1/projects`.
+
+## Versioning
+
+The current API version is **v1**, and the version identifier is embedded directly in the URL path. This means you always know which version your integration targets just by looking at the URL — no separate header or query parameter required.
+
+When mFoundry introduces breaking changes, they ship under a new version prefix (for example, `/v2`). Non-breaking additions — such as new optional fields or new endpoints — may be added to the existing version without notice. You should write your integration to tolerate unknown fields in responses.
+
+## Rate Limits
+
+You can make up to **1,000 requests per minute** per API key. Every API response includes the following headers so you can monitor your usage in real time:
+
+| Header | Description |
+|---|---|
+| `X-RateLimit-Limit` | The maximum number of requests allowed per minute |
+| `X-RateLimit-Remaining` | The number of requests remaining in the current window |
+| `X-RateLimit-Reset` | The UTC epoch timestamp (in seconds) when the window resets |
+
+When you exceed the rate limit, the API returns a `429 Too Many Requests` status. Wait until the time indicated by `X-RateLimit-Reset` before retrying, or implement exponential backoff in your client.
+
+## Request Format
+
+Send all request bodies as JSON and set the `Content-Type` header accordingly:
+
+```
+Content-Type: application/json
+```
+
+Every successful response body is also JSON. `DELETE` endpoints that return no content respond with `204 No Content` and an empty body. See the [Errors](/api-reference/errors) page for details on error response structure.
+
+## Pagination
+
+All list endpoints support cursor-based pagination via two query parameters:
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `limit` | integer | `20` | Number of records to return. Maximum is `100`. |
+| `cursor` | string | — | Opaque cursor value from the previous response's `next_cursor` field |
+
+When more records exist beyond the current page, the response includes a `next_cursor` field. Pass that value as the `cursor` parameter on your next request to retrieve the following page. When `next_cursor` is absent or `null`, you have reached the last page.
+
+```json
+{
+  "data": [ /* ... */ ],
+  "next_cursor": "cursor_xyz789"
+}
+```
+
+## Explore the API
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/api-reference/authentication">
+    Learn how to include your Bearer token and handle auth errors.
+  </Card>
+  <Card title="Errors" icon="circle-exclamation" href="/api-reference/errors">
+    Understand the error response format and all HTTP status codes.
+  </Card>
+</CardGroup>

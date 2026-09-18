@@ -1,0 +1,61 @@
+---
+title: "Manage Your Team and Permissions in mFoundry"
+sidebarTitle: "Team Management"
+description: "Invite teammates, assign roles, and control access to projects in mFoundry using role-based permissions to keep your work secure and organized."
+---
+
+mFoundry gives you precise control over who can see and change what across your organization. Every person you add is assigned a role that determines their capabilities — from full administrative control down to read-only viewing — so you can collaborate confidently without worrying about accidental changes or unauthorized access to sensitive workflows.
+
+## Roles and Permissions
+
+mFoundry uses four built-in roles. Assign the most restrictive role that still lets each person do their job.
+
+| Role | Invite Members | Manage Projects | Edit Workflows | View Only |
+|------|:--------------:|:---------------:|:--------------:|:---------:|
+| Owner | ✅ | ✅ | ✅ | — |
+| Admin | ✅ | ✅ | ✅ | — |
+| Member | — | — | ✅ | — |
+| Viewer | — | — | — | ✅ |
+
+- **Owner** — full control over the organization, including billing and deleting the org itself. Every organization must retain at least one Owner at all times.
+- **Admin** — can manage projects, workflows, integrations, and team membership, but cannot access billing or delete the organization.
+- **Member** — can create and edit workflows within projects they have been added to, but cannot invite others or change project settings.
+- **Viewer** — read-only access to projects and workflows they have been granted visibility on; cannot make any changes.
+
+## Inviting Teammates
+
+Add new people to your organization in a few clicks from the Team settings page.
+
+<Steps>
+  <Step title="Go to Settings > Team">
+    Click **Settings** in the left sidebar, then open the **Team** tab. You will see a list of current members alongside their assigned roles and join dates.
+  </Step>
+  <Step title="Click Invite Member">
+    Click the **Invite Member** button in the top-right corner of the Team page to open the invitation dialog.
+  </Step>
+  <Step title="Enter an email address and select a role">
+    Type the invitee's email address into the input field. Use the role dropdown to assign the appropriate role — if you are unsure, start with **Member** and promote them later if needed.
+  </Step>
+  <Step title="Click Send Invite">
+    Click **Send Invite** to dispatch the invitation email. Your teammate will receive a message with a secure link that lets them create an account or log in and join your organization. The Team page will list them as **Pending** until they accept.
+  </Step>
+</Steps>
+
+## Changing Roles
+
+Owners and admins can reassign any member's role at any time without interrupting their access to existing work. Navigate to **Settings > Team**, find the member you want to update, and click the role badge next to their name. Select the new role from the dropdown and confirm the change — it takes effect immediately. The member does not need to log out or take any action.
+
+If you are demoting someone from Admin to Member or Viewer, review which projects they own or manage first to avoid leaving any projects without an active administrator.
+
+## Removing Members
+
+To remove someone from your organization, go to **Settings > Team**, click the **⋯** menu next to their name, and select **Remove Member**. Confirm the action in the dialog that appears.
+
+When you remove a member:
+- They immediately lose access to all projects and workflows in your organization.
+- Any workflows, tasks, or comments they created remain intact and are reassigned to unowned status — no work is deleted.
+- If they were the sole contributor to a private project, an Owner or Admin must manually reassign ownership of that project.
+
+<Warning>
+  Your organization must always have at least one member with the **Owner** role. mFoundry will prevent you from removing or demoting the last Owner. Before making changes, promote another trusted member to Owner so there is no interruption in administrative access.
+</Warning>

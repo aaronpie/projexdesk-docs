@@ -1,0 +1,47 @@
+---
+title: "How mFoundry Works: Platform Overview"
+sidebarTitle: "Overview"
+description: "Learn how mFoundry organizes your work into organizations, projects, and workflows — and how they connect to teams, integrations, and the API."
+---
+
+mFoundry is built around a clear, layered model that maps the way real teams work: a single top-level **Organization** houses everything your company owns, **Projects** group related efforts together, **Workflows** define the automated sequences inside each project, and **Tasks** represent the discrete units of work those workflows execute. Every API call, webhook event, and dashboard view you interact with traces back to this hierarchy — understanding it gives you a mental model for navigating the entire platform.
+
+## The Platform Hierarchy
+
+Work through each layer from the top down to see how they nest and relate to one another.
+
+<Steps>
+  <Step title="Organization">
+    Your organization is the root container for all of your mFoundry resources. It holds your members, billing information, and global settings. Every project, workflow, and task you create lives within exactly one organization.
+  </Step>
+  <Step title="Projects">
+    Projects are the primary unit of work inside an organization. Each project has its own name, status, and description, and can be shared with specific team members under granular role-based permissions. Think of a project as a self-contained workspace for a product, initiative, or client.
+  </Step>
+  <Step title="Workflows">
+    Workflows define the automated sequences that power your projects. A workflow is an ordered series of steps — each step can call an integration, run a transformation, trigger a webhook, or branch based on conditions. Workflows are versioned, so you can iterate safely without breaking running automations.
+  </Step>
+  <Step title="Tasks">
+    Tasks are the atomic units of execution inside a workflow. When a workflow runs, mFoundry creates one task per step and tracks its status, logs, and output in real time. You can inspect, retry, or cancel individual tasks directly from the dashboard or via the API.
+  </Step>
+</Steps>
+
+## Where Teams and Integrations Fit
+
+Members of your organization are assigned roles at both the organization level and the individual project level, giving you fine-grained control over who can view, edit, or administer each resource. Integrations — such as Slack, GitHub, and Jira — attach at the project layer and fire webhook events that feed directly into your workflows, keeping external tools in sync without manual work.
+
+## Explore Further
+
+<CardGroup cols={2}>
+  <Card title="Key Features" icon="star" href="/concepts/key-features">
+    Discover the dashboard, collaboration tools, notifications, webhooks, and REST API that power the platform.
+  </Card>
+  <Card title="Data Model" icon="database" href="/concepts/data-model">
+    Dive into the fields and relationships behind organizations, projects, workflows, and users.
+  </Card>
+  <Card title="Terminology" icon="book-open" href="/concepts/terminology">
+    Look up concise definitions for every mFoundry term you'll encounter in the UI and API docs.
+  </Card>
+  <Card title="Your First Project" icon="rocket" href="/guides/first-project">
+    Follow a step-by-step guide to create a project, build a workflow, and run your first task.
+  </Card>
+</CardGroup>

@@ -1,0 +1,40 @@
+---
+title: "Set Up Your mFoundry Account"
+sidebarTitle: "Account Setup"
+description: "Create your mFoundry account, verify your email, and configure your profile and organization settings before building your first project."
+---
+
+Setting up your mFoundry account takes just a few minutes, but getting it right from the start — with a verified email, a properly named organization, and the right teammates invited — sets you up for a smooth experience as your workflows grow. Follow the steps below to go from a fresh signup to a fully configured workspace.
+
+## Creating Your Account
+
+<Steps>
+  <Step title="Sign Up">
+    Go to [app.mfoundry.io/signup](https://app.mfoundry.io/signup) and enter your **full name**, **email address**, and a strong **password**. Your password must be at least 12 characters and include a mix of letters, numbers, and symbols. Click **Create Account** to proceed.
+  </Step>
+  <Step title="Verify Your Email">
+    Check your inbox for an email from `no-reply@mfoundry.io` with the subject line **"Verify your mFoundry email"**. Click the verification link inside — it expires after 24 hours. If you don't see the email, check your spam folder or click **Resend verification email** on the login page.
+  </Step>
+  <Step title="Create an Organization">
+    After verifying your email, mFoundry prompts you to create your first **organization**. Choose a clear, recognizable **organization name** (for example, `Acme Corp`) and a unique **slug** (for example, `acme-corp`). The slug forms part of your API URLs and webhook endpoints, so pick something short and descriptive.
+  </Step>
+  <Step title="Invite Your Team">
+    Navigate to **Settings > Team** in the left sidebar. Click **Invite Member**, enter your teammate's email address, and select an appropriate role — **Admin**, **Editor**, or **Viewer**. Your teammate receives an invitation email and can join your organization with a single click. Repeat this for every person who needs access.
+  </Step>
+</Steps>
+
+<Note>
+  Organization slugs are **permanent** and cannot be changed after creation. Choose your slug carefully — it appears in API URLs, webhook payloads, and any links you share with external systems.
+</Note>
+
+## Account Settings
+
+Once your organization is set up, take a moment to configure your personal account settings. Navigate to **Settings > Profile** to update the following:
+
+- **Profile Information** — Update your display name, avatar, and job title so teammates can identify you easily.
+- **Notification Preferences** — Choose which events trigger email or in-app notifications, such as workflow failures, new invitations, or integration alerts.
+- **Timezone** — Set your local timezone so that scheduled workflows, timestamps, and activity logs display times correctly for your location.
+
+<Tip>
+  If your company uses a single sign-on (SSO) provider such as Okta, Google Workspace, or Azure AD, you can enable SSO from **Settings > Security > Single Sign-On**. Once configured, your teammates can log in with their corporate credentials instead of a separate mFoundry password.
+</Tip>
