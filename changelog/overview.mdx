@@ -1,0 +1,68 @@
+---
+title: "Changelog"
+sidebarTitle: "Overview"
+description: "Product updates, new features, and fixes shipped to mFoundry."
+---
+
+<Update label="Week of September 15, 2026" tags={["release"]}>
+
+## New features
+
+**Capability gate for every workspace member.** You can now set five independent access switches per member — Files, Commands, Browser, Screen, and Automation — each of which can be `blocked`, `ask`, or `always`. New members inherit `always` on every switch, so nothing changes until you tighten one. Denials are remembered for the rest of a turn, "Always allow" grants can carry an expiry, and a workspace-level ceiling caps how permissive any member can be. See [Team management](/guides/team-management) for how to apply the switches.
+
+**Actuation receipts.** Every allowed action now writes an append-only receipt — one `pending` row before the action runs and one finalize row after (`completed`, `failed`, or `unknown`). Receipts store a SHA-256 digest of the arguments, never the arguments themselves, so the log is safe to hand a reviewer with no redaction pass. If a receipt cannot be written, the action is refused. Read receipts through `GET /api/receipts`.
+
+**Turn provenance.** Every reply is now backed by an immutable record — model, provider, effort, computer, approval mode, working folder, and room roster — frozen at turn start and keyed by `turnId`. A small provenance chip on each reply shows the model and computer that produced it, in both direct-message and room views. Provenance rows can be exported as append-only NDJSON to a folder you choose once.
+
+**Path and URL guards.** A shared path guard now rejects traversal, symlink escapes, and a fixed list of secret file patterns for every path a workflow accepts. A URL guard rejects credential-bearing URLs and any host that resolves to a private, loopback, or link-local range, with a per-member allowlist for real internal hosts.
+
+**Fish Audio voice provider.** Fish Audio is available as a voice provider alongside the existing options.
+
+**Optional retention sweep for thread event logs.** You can now set a retention window for thread event logs; older entries are swept automatically. Deleting a thread also deletes its event log.
+
+**Steer a queued message into the running turn.** Sending while a turn is in flight no longer interrupts. The new message is folded into the running turn.
+
+**Copy a reviewed skill between members.** A reviewed skill on one member can be copied to one or more others in a single action. Clean skills land enabled; skills with warnings land disabled and still need a per-target review. Existing names are skipped, never overwritten.
+
+**Recent-work brief and time-based recall for rooms.** Rooms now show a recent-work brief, per-turn log lines, and support recall by time.
+
+**Organization logo and shared avatars.** Upload an organization logo and share avatars across members in a workspace.
+
+## Updates
+
+**Refreshed visual identity.** Two new skins ship by default — **Studio** (light, verdigris accent) and **Studio Night** (its dark twin) — alongside three bundled typefaces (Bricolage Grotesque for display, Geist for body, Geist Mono for data). Existing installs keep whatever skin you already chose. A brand wordmark now sits at the top of the sidebar and picks up your workspace name for white-labelled deployments.
+
+**Managed connected apps.** Connected apps in packaged builds now route through the platform-owned broker by default. When the service is unreachable, the Apps panel says so plainly and retries on next launch instead of asking you to restart. See [Integrations](/guides/integrations) for the full connector list.
+
+**Chief of Staff covers delegated work.** A Chief of Staff's Full access now extends to the work it delegates, so a delegated action doesn't stop for a second approval prompt. A broken delegated run reaches the Chief of Staff, who can retry it.
+
+**Coordination resume.** A delegated return now resumes with only the events the session hasn't already seen, instead of replaying the full history.
+
+**Approval modes for Qwen Code and Gemini CLI.** These engines now honor the approval mode you set, matching the behavior of the other engines.
+
+**Concurrent turns per member.** Multiple turns per member can run at once on a VPS. Only the desktop is exclusive, and only once it's actually in use.
+
+**Routines dispatch into a free thread slot.** Scheduled work now finds a free thread slot instead of queueing behind a busy one, and surfaces busy-target deferrals on queued runs. Computers stay awake for due routines, and the panel now shows where each schedule runs.
+
+**Thread reference chips.** Paste and send canonical thread reference links; they render as chips in the composer and transcript.
+
+**Bulk thread deletion on iOS.** Delete multiple threads at once, and thread switching stays reachable while you do.
+
+**Windows can use "This computer".** Windows hosts can now use the local machine as a computer surface the same way macOS already could.
+
+## Bug fixes
+
+- **iOS composer**: the composer's corners stay at 22pt as the draft grows, and the keyboard Return key inserts a newline — only the arrow button sends. Android matches the same behavior.
+- **Windows terminals and checkpoints**: the install terminal opens as a window you can type into, checkpoint folders refuse the home directory however Windows spells it, and `npx`/`npm` MCP servers start without a shell.
+- **Edited messages** appear immediately, not after the reply comes back.
+- **Coordination**: each teammate result is sent once, peer text is labelled in 1:1 replays, and `coordinate_bots` names the specific bot id it could not reach.
+- **Computers**: the auto computer is claimed lazily on the first screen tool call, occupied desktops are waited for instead of failing the turn, and machines owned by a member are cleaned up when the member is deleted.
+- **Recall**: a bare `session_search` date is read as local midnight.
+- **Rooms**: the prepared approval mode is resolved the same way the re-check resolves it.
+- **Local voice** is preserved after organization sign-in.
+- **Skills**: importing a GitHub blob link to a repository-root `SKILL.md` now works.
+- **Android**: session task CRUD is deduped onto one shared policy, and thread pin behavior is fixed.
+- **Mobile**: teammate waits show as waits, not work spinners.
+- **Windows lease**: a stale Windows data-directory lease after same-boot PID reuse no longer blocks startup.
+
+</Update>

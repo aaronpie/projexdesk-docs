@@ -54,6 +54,12 @@
               "help/faq",
               "help/troubleshooting"
             ]
+          },
+          {
+            "group": "Changelog",
+            "pages": [
+              "changelog/overview"
+            ]
           }
         ]
       },
