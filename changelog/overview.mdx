@@ -4,6 +4,36 @@ sidebarTitle: "Overview"
 description: "Product updates, new features, and fixes shipped to mFoundry."
 ---
 
+<Update label="Week of September 21, 2026" tags={["release"]}>
+
+## New features
+
+**Per-bot connected-app allowlist.** Each bot can now be scoped to a specific set of connected accounts instead of reaching every account you own. A grant names one account, so a work GitHub and a personal GitHub are separate grants and two coding bots can hold different ones. Existing bots keep their current reach until you scope them. The New Bot dialog pre-selects the accounts that match the role's apps for you to confirm, and bot settings lets you edit the list at any time. See [Team management](/guides/team-management) for how to apply the scope.
+
+**Grant a bot the account it just asked you to connect.** When a scoped bot raises a connection card and you complete it, that one account is granted to that bot before the turn resumes. Only the card's app and the alias it named are granted; connecting from the Apps panel still grants nobody anything, and a bot with no allowlist is left alone.
+
+**Credential broker.** A bot can now use a credential you keep in your own password manager. The new `use_credential` tool asks by domain and name, shows you a card, and on approval releases the credential straight into a tool child. mFoundry never stores the credential itself — only a pairing token — and the bot receives an outcome and an exit code only, never the value. Every release needs a fresh decision; auto-approve and Full access are refused on purpose.
+
+**Direct Bitwarden vault provider.** Bitwarden is the first supported credential provider. Candidate items are listed before you're asked anything, so a locked vault or a missing login settles without a decision. One match names itself on the card; several offer a choice. Approval mints a single-use decision bound to the chosen item, and one unlock covers the session. Configure it under **Settings → Connections**.
+
+## Updates
+
+**Cloud computer provider is now Boat.** ascii.dev Box has renamed itself to Boat and shipped a new API. mFoundry now points at `boat.dev`, and the resource type is a sandbox. Existing `box_` API keys are still accepted; new keys use the `sandbox_` prefix. Key help now links to `docs.boat.dev/api-keys`. The change is applied across desktop (all ten locales), server messages, Android, and iOS.
+
+**Bill new Boat computers to an organization wallet.** If your Boat plan belongs to a team, you can now set an organization under **Settings → Connections** so new cloud computer creates bill to the team wallet instead of the key owner's personal wallet. Leave it empty to keep today's behavior. A 402 on create now names the wallet that was billed and, when none is set, points you to where to enter one. See [Integrations](/guides/integrations) for the connector list.
+
+**Replace a saved cloud computer key the provider rejects.** A 401 on the saved key now counts as a dead key, so you can swap in a working key from **Settings** instead of being stuck on "Keep the current account and retry" forever. The replacement is held to the same standard as adding a first key: the provider must accept it and it must reach every remembered cloud computer.
+
+## Bug fixes
+
+- **Credential provider CLI on macOS**: a packaged app opened from the Finder now finds the credential CLI on the same augmented PATH the engines use, instead of reporting it as not installed.
+- **Malformed pairing token**: a pairing token the credential provider rejects at once is now named as not paired, rather than reported as an unreachable listener.
+- **Locked listener and stale token**: a handshake timeout on the credential provider is now reported as unreachable rather than blaming the token and sending you to re-pair for nothing.
+- **Second confirmation prompt**: the card copy now tells you the credential provider will confirm each release a second time in its own prompt, so an unanswered prompt no longer looks like a dead listener.
+- **Update feed verification**: post-upload probes now bypass Cloudflare's cached 404s with a unique query string, so a fresh release is verified against the bytes R2 actually holds.
+
+</Update>
+
 <Update label="Week of September 15, 2026" tags={["release"]}>
 
 ## New features
