@@ -4,6 +4,26 @@ sidebarTitle: "Overview"
 description: "Product updates, new features, and fixes shipped to mFoundry."
 ---
 
+<Update label="Week of September 22, 2026" tags={["release"]}>
+
+## New features
+
+**Bundled first-party skills.** mFoundry now ships its own reviewed skill packages, including scripts and reference files, inside the signed app. Each shipped skill is verified file by file against a signed manifest. If any file is changed, added, or removed, the skill turns off. Shipped skills show a "Ships with ProjexDesk" label and can't be copied to other members or exported in team packages.
+
+- **Project indexer role.** When you create a bot from the new `project-indexer` role, mFoundry installs the `cm-project-indexer` skill automatically.
+- **Install on an existing bot.** Pick a shipped skill from the picker in the bot's **Skills** panel, or call `POST /api/bots/:id/skills/bundled`.
+- **Same rules as other skills.** Bundled scripts get no extra privileges and still go through your approval modes. Public GitHub import still accepts markdown only.
+
+## Security
+
+**Write guard protects the installed app.** A bot can no longer write into the installed mFoundry app, in every approval mode.
+
+## Bug fixes
+
+- **Stop during setup**: if you stop a turn while it's still being set up, the task now stays busy until the engine has actually released the thread. Before this fix, the next message could fail with "a turn is already running on this thread", mostly on Windows. Stop itself still responds right away.
+
+</Update>
+
 <Update label="Week of September 15, 2026" tags={["release"]}>
 
 ## New features
