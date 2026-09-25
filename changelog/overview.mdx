@@ -14,9 +14,36 @@ description: "Product updates, new features, and fixes shipped to mFoundry."
 - **Install on an existing bot.** Pick a shipped skill from the picker in the bot's **Skills** panel, or call `POST /api/bots/:id/skills/bundled`.
 - **Same rules as other skills.** Bundled scripts get no extra privileges and still go through your approval modes. Public GitHub import still accepts markdown only.
 
+**Command allowlist.** You can now save an exact command for a bot so a later identical request is approved without an approval card. Each rule covers one bot, provider, and working folder, and stays saved until you remove it. Prefixes and wildcards don't create broader permissions. Open **Manage command allowlist** to add or remove rules.
+
+**Per-tool grants for connected apps.** You can now limit a bot to specific tools on a connected app, not just specific accounts. mFoundry checks the bot's account allowlist first and its tool grants second, and either check can refuse the call. A call whose tools can't be read is refused.
+
+**New bot editor, saved defaults, and presets.** The New bot dialog is now a section editor. You can save defaults for new bots and share them as a preset file. Someone else adds the preset in **Templates → Import** or **Admin → Packages**, and it then appears in New bot. Presets never include model choices, folders, computers, approval levels, connected apps, MCP servers, or routines. A bot created from a role that names apps still gets an app allowlist, even when saved defaults exist.
+
+**Organization features.** Organization sign-in is now part of the welcome flow. This release also adds Company models for new bots, an organization policy overlay, an organization library, and per-bot visibility with an admin activity log.
+
+**New models and providers.** Mistral is available as a provider. Claude Opus 5.5 and Grok 4.7 are available as models.
+
+**More in this release:**
+
+- Bots can send voice notes with the new `send_voice_note` tool.
+- Chat renders LaTeX maths.
+- Each bot can have its own Slack app link.
+- A startup screen and a system tray icon are now available.
+- Threads are listed in update order, and you can pin them. iOS works the same way.
+- Peer approvals now report denied, expired, and cancelled outcomes.
+
 ## Security
 
 **Write guard protects the installed app.** A bot can no longer write into the installed mFoundry app, in every approval mode.
+
+**Saved commands never loosen the access gate.** Your Commands switch still decides first. With `blocked`, a saved command is refused. With `ask`, you still get an approval card. If you denied the same tool and program earlier in the turn, the request is refused without a card. Saved commands are offered and matched only when the switch is `always`.
+
+**Saved defaults hold no live grants.** When you edit saved defaults for new bots, mFoundry doesn't offer the account allowlist, the capability switches, or the host allowlist.
+
+## Updates
+
+**Licence grace period.** After a licence expires, mFoundry keeps it working for a seven-day grace period before access stops.
 
 ## Bug fixes
 
