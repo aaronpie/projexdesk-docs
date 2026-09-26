@@ -45,9 +45,15 @@ description: "Product updates, new features, and fixes shipped to mFoundry."
 
 **Licence grace period.** After a licence expires, mFoundry keeps it working for a seven-day grace period before access stops.
 
+**Update Codex from Engines.** **Settings → Engines** now has an **Update Codex** button beside **Update Claude**. It runs `codex update` on your configured Codex executable, then shows the installed version. The update doesn't run while a Codex task is running.
+
+**Disconnecting an account removes bot grants.** When you disconnect a connected account, mFoundry removes that account from every bot's app allowlist. Disconnecting an app removes all of its accounts. Grants no longer linger as "Needs reconnecting". A bot whose list becomes empty stays restricted and doesn't gain access to every account.
+
 ## Bug fixes
 
 - **Stop during setup**: if you stop a turn while it's still being set up, the task now stays busy until the engine has actually released the thread. Before this fix, the next message could fail with "a turn is already running on this thread", mostly on Windows. Stop itself still responds right away.
+- **Shared account aliases**: when two connected apps share the same account alias, a call now resolves to the account of the app it names. Before this fix, a call could resolve to the other app's account and be refused. If the call names no app, every matching account must be granted.
+- **Tool search for app-restricted bots**: a bot limited to certain connected apps can search for tools again. Before this fix, every tool search call from these bots was refused.
 
 </Update>
 
